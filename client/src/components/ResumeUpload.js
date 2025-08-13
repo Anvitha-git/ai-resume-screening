@@ -1,38 +1,51 @@
 import React, { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import axios from 'axios';
 
 function ResumeUpload() {
-  const [uploadedFile, setUploadedFile] = useState(null);
+  const [file, setFile] = useState(null);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg']
-    },
-    onDrop: (acceptedFiles) => {
-      console.log('Uploaded files:', acceptedFiles);
-      if (acceptedFiles.length > 0) {
-        setUploadedFile(acceptedFiles[0]); // Store the first file
-      }
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!file) {
+      alert('Please select a file');
+      return;
     }
-  });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      // Upload resume to backend
+      const response = await axios.post('http://10.217.42.144:8000/upload_resume', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      console.log('Backend Response:', response.data);
+
+      // Notify chatbot
+      const chatbotResponse = await axios.post('http://localhost:5005/webhooks/rest/webhook', {
+        sender: 'user',
+        message: 'I uploaded my resume',
+      });
+      console.log('Chatbot Response:', chatbotResponse.data);
+
+      alert('Resume uploaded successfully!');
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to upload resume');
+    }
+  };
 
   return (
-    <div {...getRootProps()} className="upload-container">
-      <input {...getInputProps()} />
-      {isDragActive ? (
-        <p>Drop your resume here...</p>
-      ) : (
-        <p>Drag and drop your resume (PDF, DOC, PNG, JPG) or click to select</p>
-      )}
-      {uploadedFile && (
-        <p style={{ color: 'lightgreen', marginTop: '10px' }}>
-          Uploaded: {uploadedFile.name}
-        </p>
-      )}
+    <div>
+      <h2>Upload Resume</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="file" accept=".pdf,.doc,.docx,.png,.jpg" onChange={handleFileChange} />
+        <button type="submit">Upload</button>
+      </form>
     </div>
   );
 }

@@ -1,0 +1,14 @@
+version: "3.1"
+stories:
+- story: greet path
+  steps:
+  - intent: greet
+  - action: utter_greet
+- story: resume upload path
+  steps:
+  - intent: resume_uploaded
+  - action: utter_resume_uploaded
+- story: goodbye path
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
