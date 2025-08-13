@@ -1,0 +1,15 @@
+version: "3.1"
+nlu:
+- intent: greet
+  examples: |
+    - hi
+    - hello
+    - hey
+- intent: resume_uploaded
+  examples: |
+    - I uploaded my resume
+    - I just submitted my resume
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye

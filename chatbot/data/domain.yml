@@ -1,0 +1,15 @@
+version: "3.1"
+intents:
+  - greet
+  - resume_uploaded
+  - goodbye
+responses:
+  utter_greet:
+    - text: "Hello! Welcome to the AI Resume Screening System."
+  utter_resume_uploaded:
+    - text: "Great! Your resume was uploaded successfully. We'll analyze it soon."
+  utter_goodbye:
+    - text: "Goodbye! Thanks for using our system."
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
